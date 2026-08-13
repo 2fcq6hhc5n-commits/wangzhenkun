@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+server.out.log
+server.err.log
+preview-*.png
+dom-*.html
+data/applications.json
+data/latest.json
+data/versions/

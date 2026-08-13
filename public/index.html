@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>牛客招聘雷达</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">牛</div>
+      <div>
+        <h1>牛客招聘雷达</h1>
+        <p id="subtitle">正在连接数据源…</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button id="autoToggle" class="btn ghost" type="button" aria-pressed="true">
+        <i data-lucide="activity"></i><span>自动刷新</span>
+      </button>
+      <button id="refreshBtn" class="btn primary" type="button">
+        <i data-lucide="refresh-cw"></i><span>立即刷新</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="stats" aria-label="数据概览">
+    <div class="stat"><span id="statJobs">--</span><small>在库职位</small></div>
+    <div class="stat"><span id="statSchool">--</span><small>校招</small></div>
+    <div class="stat"><span id="statIntern">--</span><small>实习</small></div>
+    <div class="stat"><span id="statFulltime">--</span><small>社招</small></div>
+    <div class="stat"><span id="statUpdated">--</span><small>最近更新</small></div>
+    <div class="stat"><span id="statVersion">--</span><small>当前版本</small></div>
+  </section>
+
+  <section class="toolbar">
+    <div class="tabs" id="sourceTabs" role="tablist" aria-label="职位类型">
+      <button class="tab active" data-source="all" type="button">全部</button>
+      <button class="tab" data-source="school" type="button">校招</button>
+      <button class="tab" data-source="intern" type="button">实习</button>
+      <button class="tab" data-source="fulltime" type="button">社招</button>
+    </div>
+    <div class="search-box">
+      <i data-lucide="search"></i>
+      <input id="searchInput" type="search" placeholder="岗位或公司" autocomplete="off">
+    </div>
+    <select id="citySelect" aria-label="城市筛选">
+      <option value="all">全部城市</option>
+    </select>
+    <button id="latestBtn" class="btn ghost hidden" type="button">
+      <i data-lucide="history"></i><span>返回最新</span>
+    </button>
+  </section>
+
+  <nav class="view-tabs" id="viewTabs" aria-label="功能视图">
+    <button class="view-tab active" data-view="jobs" type="button">职位列表</button>
+    <button class="view-tab" data-view="companies" type="button">企业汇总</button>
+    <button class="view-tab" data-view="tracking" type="button">投递追踪</button>
+  </nav>
+
+  <main class="layout">
+    <section class="table-panel" id="jobsPanel">
+      <div class="table-meta">
+        <h2 id="tableTitle">职位列表</h2>
+        <span id="tableCount">--</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-status">状态</th>
+              <th class="col-job">职位</th>
+              <th class="col-company">公司</th>
+              <th class="col-source">类型</th>
+              <th class="col-city">城市</th>
+              <th class="col-salary">薪资</th>
+              <th class="col-graduate">毕业要求</th>
+              <th class="col-tags">标签</th>
+              <th class="col-time">更新时间</th>
+              <th class="col-apply">投递</th>
+              <th class="col-link">详情</th>
+            </tr>
+          </thead>
+          <tbody id="jobRows"></tbody>
+        </table>
+      </div>
+      <div class="pager">
+        <span id="pageInfo">--</span>
+        <div class="pager-buttons">
+          <button id="prevPage" class="btn ghost" type="button">上一页</button>
+          <button id="nextPage" class="btn ghost" type="button">下一页</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="table-panel view-panel hidden" id="companiesPanel">
+      <div class="table-meta">
+        <h2>企业汇总</h2>
+        <span id="companyCount">--</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-status">投递状态</th>
+              <th class="col-company-wide">公司</th>
+              <th class="col-industry">行业</th>
+              <th class="col-scale">规模 / 融资</th>
+              <th class="col-city">城市</th>
+              <th class="col-source">招聘类型</th>
+              <th class="col-count">职位数</th>
+              <th class="col-time">最近更新</th>
+              <th class="col-link">操作</th>
+            </tr>
+          </thead>
+          <tbody id="companyRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="table-panel view-panel hidden" id="trackingPanel">
+      <div class="tracking-summary" id="trackingSummary"></div>
+      <div class="table-meta">
+        <h2>投递追踪</h2>
+        <span id="trackingCount">--</span>
+      </div>
+      <div class="tracking-filters" id="trackingFilters"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-company-wide">公司</th>
+              <th class="col-status">状态</th>
+              <th class="col-note">备注</th>
+              <th class="col-time">更新时间</th>
+              <th class="col-link">操作</th>
+            </tr>
+          </thead>
+          <tbody id="trackingRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="history-panel">
+      <h2>版本记录</h2>
+      <div id="versionList" class="version-list"></div>
+    </aside>
+  </main>
+
+  <div id="companyModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-panel">
+      <button class="modal-close" data-close-modal type="button" aria-label="关闭">
+        <i data-lucide="x"></i>
+      </button>
+      <div id="companyModalBody"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
