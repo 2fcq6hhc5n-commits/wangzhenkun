@@ -56,12 +56,24 @@ const els = {
 };
 
 async function api(path, options = {}) {
-  const res = await fetch(path, options);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok || data.ok === false) {
-    throw new Error(data.error || `请求失败 ${res.status}`);
+  const retries = 3;
+  const canRetry = !options.method || options.method === "GET";
+  let lastError;
+  for (let attempt = 1; attempt <= retries; attempt += 1) {
+    try {
+      const res = await fetch(path, options);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || `请求失败 ${res.status}`);
+      }
+      return data;
+    } catch (error) {
+      lastError = error;
+      if (attempt >= retries || !canRetry) break;
+      await new Promise((resolve) => setTimeout(resolve, 400 * attempt));
+    }
   }
-  return data;
+  throw lastError;
 }
 
 function escapeHtml(value) {
