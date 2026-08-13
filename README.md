@@ -47,6 +47,7 @@ python server.py
 项目已内置 Vercel 部署配置：
 
 - `app.py`：FastAPI 入口，提供与本地版相同的 API。
+- `api/index.py`：Vercel 无框架检测时的文件函数入口，兼容匿名部署和 GitHub 导入。
 - `vercel.json`：每 6 小时通过 Cron 自动刷新一次。
 - `storage.py`：本地开发读写 `data/`；在 Vercel 上自动切换到 Vercel Blob 持久化版本快照和投递记录。
 - `seed_data/`：首次部署时的内置种子数据，让线上在创建 Blob Store 之前也能正常展示。
