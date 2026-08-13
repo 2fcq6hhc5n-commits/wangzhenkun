@@ -12,3 +12,5 @@ dom-*.html
 data/applications.json
 data/latest.json
 data/versions/
+
+.vercel
