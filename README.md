@@ -69,6 +69,32 @@ npx vercel --prod
 
 如需给 Cron 接口加鉴权，在 Vercel 项目设置中添加 `CRON_SECRET` 环境变量即可。
 
+## 部署到 Cloudflare
+
+Cloudflare 不运行 Python 服务端，项目已内置 JavaScript Worker 兼容层：
+
+- `src/worker.js`：Cloudflare Worker 入口，同时托管 `public/` 静态文件和 `/api/*`。
+- `src/api.js`：用 JavaScript 复刻爬虫、企业聚合、版本快照和投递追踪 API。
+- `functions/api/[[path]].js`：Cloudflare Pages Functions 入口，方便从 GitHub 导入 Pages。
+- `public/seed-data/`：内置 v0001 到 v0024 的种子数据，首次上线即可展示。
+
+本地验证：
+
+```powershell
+npx wrangler dev --port 8787
+```
+
+部署 Worker：
+
+```powershell
+npx wrangler login
+npx wrangler deploy
+```
+
+如果使用 Cloudflare Pages 的 GitHub 导入，构建命令填 `npm run build`，输出目录填 `public`。
+
+投递记录和线上版本快照默认使用 Worker 内存作为临时存储。需要持久化时创建 Cloudflare KV，把命名空间 id 填入 `wrangler.toml` 的 `JOBS` 绑定即可。
+
 ## 说明
 
 牛客的职位检索接口目前有阿里云滑动验证，服务端直接请求分页接口会被拦截；当前版本抓取三个职位广场 SSR 页面中的首批职位（每类约 20 条）。手动刷新和版本记录已经完整可用，后续可以在同一架构上接入浏览器自动化来扩展分页抓取。

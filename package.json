@@ -1,0 +1,11 @@
+{
+  "name": "nowcoder-jobs-board",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "echo \"Static build ready\" && exit 0",
+    "dev:worker": "wrangler dev",
+    "deploy:worker": "wrangler deploy",
+    "deploy:pages": "wrangler pages deploy public"
+  }
+}
