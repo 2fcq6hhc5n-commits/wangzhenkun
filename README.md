@@ -93,7 +93,7 @@ npx wrangler deploy
 
 如果使用 Cloudflare Pages 的 GitHub 导入，构建命令填 `npm run build`，输出目录填 `public`。
 
-投递记录和线上版本快照默认使用 Worker 内存作为临时存储。需要持久化时创建 Cloudflare KV，把命名空间 id 填入 `wrangler.toml` 的 `JOBS` 绑定即可。
+投递记录和线上版本快照已通过 Cloudflare KV 持久化，Worker 的 `JOBS` 绑定已配置在 `wrangler.toml`。Pages 项目也已在项目设置中绑定同名 `JOBS` KV；如果用 GitHub 导入 Pages，需要确认项目 `Settings > Functions > KV namespace bindings` 里存在该绑定。
 
 ## 说明
 

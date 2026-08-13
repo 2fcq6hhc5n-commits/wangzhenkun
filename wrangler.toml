@@ -2,12 +2,11 @@ name = "nowcoder-jobs-board"
 main = "src/worker.js"
 compatibility_date = "2026-08-13"
 
-assets = { directory = "./public", binding = "ASSETS" }
+assets = { directory = "./public", binding = "STATIC_ASSETS" }
 
-# Create a KV namespace, then uncomment and fill in its id:
-# [[kv_namespaces]]
-# binding = "JOBS"
-# id = "your_kv_namespace_id"
+[[kv_namespaces]]
+binding = "JOBS"
+id = "8a341d75ae48441d8afb9c6dd214824d"
 
 # Cloudflare Free plan does not allow cron triggers. On Workers Paid, enable:
 # [triggers]

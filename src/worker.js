@@ -4,7 +4,10 @@ export default {
   async fetch(request, env) {
     const apiResponse = await handleApi(request, env);
     if (apiResponse) return apiResponse;
-    if (env?.ASSETS) return env.ASSETS.fetch(request);
+    if (env?.STATIC_ASSETS || env?.ASSETS) {
+      const assets = env.STATIC_ASSETS || env.ASSETS;
+      return assets.fetch(request);
+    }
     return new Response("Not found", { status: 404 });
   },
 

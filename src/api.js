@@ -89,8 +89,9 @@ function isoNow() {
 
 async function readSeed(env, key, request) {
   try {
-    if (env?.ASSETS) {
-      const res = await env.ASSETS.fetch(new URL(`https://assets.local/seed-data/${key}`));
+    const assets = env?.STATIC_ASSETS || env?.ASSETS;
+    if (assets) {
+      const res = await assets.fetch(new URL(`https://assets.local/seed-data/${key}`));
       if (!res.ok) return undefined;
       return await res.json();
     }
@@ -135,6 +136,9 @@ function parseState(html) {
   let payload = html.slice(start + marker.length);
   const end = payload.indexOf("</script>");
   if (end >= 0) payload = payload.slice(0, end);
+  payload = payload.trim();
+  const trailingJs = payload.indexOf(";(function");
+  if (trailingJs >= 0) payload = payload.slice(0, trailingJs);
   payload = payload.trim();
   if (payload.endsWith(";")) payload = payload.slice(0, -1).trim();
   return JSON.parse(payload);
@@ -337,7 +341,12 @@ export async function crawlNow(env, request) {
         };
       }
     }
-    if (!allJobs.length) throw new Error("所有数据源都未返回职位");
+    if (!allJobs.length) {
+      const detail = Object.entries(sourceStatus)
+        .map(([key, value]) => `${key}:${value.error || "empty"}`)
+        .join("; ");
+      throw new Error(`all sources returned no jobs [${detail}]`);
+    }
     allJobs.sort((a, b) => (b.updated_ms || 0) - (a.updated_ms || 0));
 
     const latest = (await readJson(env, "latest.json", {}, request)) || {};
