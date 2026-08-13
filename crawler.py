@@ -7,6 +7,8 @@ import urllib.request
 from datetime import datetime
 from pathlib import Path
 
+import storage
+
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -74,17 +76,11 @@ _current = {
 
 
 def _read_json(path, default=None):
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError, OSError):
-        return default
+    return storage.read_json(path, default)
 
 
 def _write_json(path, payload):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    tmp.replace(path)
+    storage.write_json(path, payload)
 
 
 def _fetch(url, timeout=20):
@@ -454,9 +450,7 @@ def get_versions():
 
 def get_version(version_id):
     path = VERSIONS_DIR / f"{version_id}.json"
-    if not path.exists():
-        return None
-    return _read_json(path)
+    return _read_json(path, None)
 
 
 if __name__ == "__main__":

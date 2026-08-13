@@ -1,7 +1,8 @@
-import json
 import threading
 from datetime import datetime
 from pathlib import Path
+
+import storage
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -14,21 +15,14 @@ _lock = threading.RLock()
 
 
 def _read_applications():
-    try:
-        data = json.loads(APPLICATIONS_FILE.read_text(encoding="utf-8"))
-        return data.get("applications", [])
-    except (FileNotFoundError, json.JSONDecodeError, OSError):
+    data = storage.read_json(APPLICATIONS_FILE, {})
+    if not isinstance(data, dict):
         return []
+    return data.get("applications", [])
 
 
 def _write_applications(applications):
-    APPLICATIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    tmp = APPLICATIONS_FILE.with_suffix(".tmp")
-    tmp.write_text(
-        json.dumps({"applications": applications}, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-    tmp.replace(APPLICATIONS_FILE)
+    storage.write_json(APPLICATIONS_FILE, {"applications": applications})
 
 
 def list_applications():

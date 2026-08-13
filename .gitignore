@@ -1,6 +1,10 @@
 __pycache__/
 *.pyc
 *.pyo
+.venv/
+.vercel/
+.env
+.env.*
 server.out.log
 server.err.log
 preview-*.png
